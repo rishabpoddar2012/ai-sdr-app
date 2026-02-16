@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+// Supabase Edge Function URL
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://qazrfivyfrgfcnibilzo.supabase.co';
+const API_URL = `${SUPABASE_URL}/functions/v1/api`;
 
 const api = axios.create({
   baseURL: API_URL,
@@ -24,6 +26,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
       window.location.href = '/login';
     }
     return Promise.reject(error);
@@ -31,3 +34,37 @@ api.interceptors.response.use(
 );
 
 export default api;
+
+// Auth APIs
+export const authAPI = {
+  login: (email, password) => api.post('/api/auth/login', { email, password }),
+  register: (data) => api.post('/api/auth/register', data),
+  getProfile: () => api.get('/api/auth/me'),
+  updateProfile: (data) => api.put('/api/auth/profile', data),
+  changePassword: (data) => api.post('/api/auth/change-password', data),
+};
+
+// Lead APIs
+export const leadsAPI = {
+  getLeads: (params) => api.get('/api/leads', { params }),
+  getLead: (id) => api.get(`/api/leads/${id}`),
+  updateLead: (id, data) => api.put(`/api/leads/${id}`, data),
+  deleteLead: (id) => api.delete(`/api/leads/${id}`),
+  getStats: () => api.get('/api/leads/stats'),
+  exportLeads: (format) => api.get(`/api/leads/export?format=${format}`),
+};
+
+// Settings APIs
+export const settingsAPI = {
+  getSettings: () => api.get('/api/settings'),
+  updateSettings: (data) => api.put('/api/settings', data),
+  testScoring: (text) => api.post('/api/test/scoring', { text }),
+};
+
+// Public API (for integrations)
+export const publicAPI = {
+  getLeads: (apiKey, params) => api.get('/v1/leads', { 
+    headers: { 'X-API-Key': apiKey },
+    params 
+  }),
+};

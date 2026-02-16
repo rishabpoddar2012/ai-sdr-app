@@ -3,13 +3,11 @@
   "name": "ai-sdr-dashboard",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "framework": "vite",
   "routes": [
     {
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ],
-  "env": {
-    "VITE_API_URL": "https://ai-sdr-api.onrender.com/api"
-  }
+  ]
 }
