@@ -1,15 +1,8 @@
 {
   "version": 2,
-  "name": "ai-sdr-app",
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
+  "name": "ai-sdr-dashboard",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "routes": [
     {
       "src": "/(.*)",
@@ -17,6 +10,6 @@
     }
   ],
   "env": {
-    "VITE_API_URL": "https://ai-sdr-api.onrender.com"
+    "VITE_API_URL": "https://ai-sdr-api.onrender.com/api"
   }
 }
