@@ -24,6 +24,7 @@ const Navbar = () => {
         <div className="navbar-links">
           <Link to="/dashboard" className="nav-link">Dashboard</Link>
           <Link to="/intent-radar" className="nav-link">Intent Radar</Link>
+          <Link to="/ai-closer" className="nav-link">AI Closer</Link>
           <Link to="/profile" className="nav-link">Profile</Link>
           <Link to="/billing" className="nav-link">Billing</Link>
         </div>

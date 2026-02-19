@@ -9,6 +9,7 @@ import LeadDetail from './pages/LeadDetail';
 import Profile from './pages/Profile';
 import Billing from './pages/Billing';
 import IntentRadar from './pages/IntentRadar';
+import AISalesCloser from './pages/AISalesCloser';
 import './App.css';
 
 function App() {
@@ -64,6 +65,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <IntentRadar />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/ai-closer" 
+            element={
+              <ProtectedRoute>
+                <AISalesCloser />
               </ProtectedRoute>
             } 
           />
