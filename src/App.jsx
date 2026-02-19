@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import LeadDetail from './pages/LeadDetail';
 import Profile from './pages/Profile';
 import Billing from './pages/Billing';
+import IntentRadar from './pages/IntentRadar';
 import './App.css';
 
 function App() {
@@ -55,6 +56,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Billing />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/intent-radar" 
+            element={
+              <ProtectedRoute>
+                <IntentRadar />
               </ProtectedRoute>
             } 
           />
