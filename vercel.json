@@ -4,6 +4,10 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
+  "env": {
+    "VITE_SUPABASE_URL": "https://qazrfivyfrgfcnibilzo.supabase.co",
+    "VITE_STRIPE_PUBLIC_KEY": "pk_test_51T2XMuEavt3frPE9bbV1fFVhuBcxtoauih0YVlunRCTGMGR3HMwXcuzBtdvCxy3QVuc3w6SaxdWo2ZwExuirpqx800Wrd4Anlv"
+  },
   "routes": [
     {
       "src": "/(.*)",
