@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
+import { useAuth } from '../context/AuthContext';
+import { MOCK_LEADS, MOCK_STATS } from '../utils/mockData';
 import LeadCard from '../components/LeadCard';
 import FiltersSidebar from '../components/FiltersSidebar';
 import './Dashboard.css';
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  const isDemo = user?.email === 'demo@aisdr.com';
+  
   const [leads, setLeads] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -23,9 +28,16 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
-    fetchLeads();
-    fetchStats();
-  }, [filters, pagination.offset]);
+    if (isDemo) {
+      // Use mock data in demo mode
+      setLeads(MOCK_LEADS);
+      setStats(MOCK_STATS);
+      setLoading(false);
+    } else {
+      fetchLeads();
+      fetchStats();
+    }
+  }, [isDemo, filters, pagination.offset]);
 
   const fetchLeads = async () => {
     try {
