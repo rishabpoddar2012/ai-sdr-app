@@ -1,16 +1,10 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
+import { DemoAuthContext } from '../App';
 import './Navbar.css';
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  const { user } = React.useContext(DemoAuthContext);
 
   return (
     <nav className="navbar">
@@ -31,20 +25,12 @@ const Navbar = () => {
       )}
       
       <div className="navbar-actions">
-        {user ? (
+        {user && (
           <div className="user-menu">
             <div className="user-info">
               <span className="user-name">{user.firstName || user.email}</span>
-              <span className={`plan-badge plan-${user.plan}`}>{user.plan}</span>
+              <span className="plan-badge plan-growth">Demo</span>
             </div>
-            <button onClick={handleLogout} className="btn btn-outline btn-sm">
-              Logout
-            </button>
-          </div>
-        ) : (
-          <div className="auth-links">
-            <Link to="/login" className="btn btn-outline">Login</Link>
-            <Link to="/signup" className="btn btn-primary">Sign Up</Link>
           </div>
         )}
       </div>
