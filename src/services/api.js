@@ -1,8 +1,7 @@
 import axios from 'axios';
 
-// Supabase Edge Function URL
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://qazrfivyfrgfcnibilzo.supabase.co';
-const API_URL = `${SUPABASE_URL}/functions/v1/api`;
+// Live API URL
+const API_URL = 'https://795868fa4a12cfe9-13-48-42-148.serveousercontent.com';
 
 const api = axios.create({
   baseURL: API_URL,
