@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import React, { useState, useEffect, useContext } from 'react';
+import { DemoAuthContext } from '../App';
 import { 
   Sparkles, 
   Copy, 
@@ -21,7 +21,7 @@ import {
 import './AISalesCloser.css';
 
 const AISalesCloser = () => {
-  const { user } = useAuth();
+  const { user } = useContext(DemoAuthContext);
   const [leads, setLeads] = useState([]);
   const [selectedLead, setSelectedLead] = useState(null);
   const [generatedPitch, setGeneratedPitch] = useState(null);

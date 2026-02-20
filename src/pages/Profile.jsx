@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import React, { useState, useContext } from 'react';
+import { DemoAuthContext } from '../App';
 import './Profile.css';
 
 const Profile = () => {
-  const { user, updateProfile } = useAuth();
+  const { user } = useContext(DemoAuthContext);
   const [formData, setFormData] = useState({
     firstName: user?.firstName || '',
     lastName: user?.lastName || '',
@@ -47,19 +47,9 @@ const Profile = () => {
       .map(k => k.trim())
       .filter(k => k);
 
-    const result = await updateProfile({
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      companyName: formData.companyName,
-      keywords: keywordsArray,
-      sourcesConfig: formData.sourcesConfig
-    });
-
-    if (result.success) {
-      setMessage({ type: 'success', text: 'Profile updated successfully!' });
-    } else {
-      setMessage({ type: 'error', text: result.error || 'Failed to update profile' });
-    }
+    // Demo mode - mock success
+    await new Promise(resolve => setTimeout(resolve, 500));
+    setMessage({ type: 'success', text: 'Profile updated successfully! (Demo)' });
 
     setIsSaving(false);
   };

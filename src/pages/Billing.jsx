@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import React, { useState, useEffect, useContext } from 'react';
+import { DemoAuthContext } from '../App';
 import api from '../services/api';
 import './Billing.css';
 
@@ -35,7 +35,7 @@ const PLANS = [
 ];
 
 const Billing = () => {
-  const { user, updateProfile } = useAuth();
+  const { user } = useContext(DemoAuthContext);
   const [billingPeriod, setBillingPeriod] = useState('monthly');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import React, { useState, useEffect, useContext } from 'react';
+import { DemoAuthContext } from '../App';
 import { 
   Flame, 
   Thermometer, 
@@ -22,7 +22,7 @@ import {
 import './IntentRadar.css';
 
 const IntentRadar = () => {
-  const { user } = useAuth();
+  const { user } = useContext(DemoAuthContext);
   const [signals, setSignals] = useState([]);
   const [stats, setStats] = useState({
     hot_signals: 0,
