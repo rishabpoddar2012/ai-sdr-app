@@ -3,35 +3,14 @@ import api from '../services/api';
 
 const AuthContext = createContext(null);
 
-// Demo user for preview mode
-const DEMO_USER = {
-  id: 'demo-123',
-  email: 'demo@aisdr.com',
-  firstName: 'Demo',
-  lastName: 'User',
-  apiKey: 'demo-api-key',
-  subscription: {
-    tier: 'growth',
-    leadsRemaining: 450,
-    totalLeads: 500,
-    expiresAt: '2026-03-20'
-  }
-};
-
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isDemoMode, setIsDemoMode] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const demo = localStorage.getItem('demoMode');
-    if (demo === 'true') {
-      setIsDemoMode(true);
-      setUser(DEMO_USER);
-      setLoading(false);
-    } else if (token) {
+    if (token) {
       fetchUser();
     } else {
       setLoading(false);
@@ -51,21 +30,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (email, password) => {
-    // Demo mode for preview
-    if (email === 'demo@aisdr.com' && password === 'demo') {
-      setIsDemoMode(true);
-      localStorage.setItem('demoMode', 'true');
-      setUser(DEMO_USER);
-      return { success: true };
-    }
-    
     try {
       setError(null);
       const response = await api.post('/auth/login', { email, password });
       const { user, token } = response.data.data;
       localStorage.setItem('token', token);
       setUser(user);
-      return { success: true };
+      return { success: true, user };
     } catch (err) {
       const message = err.response?.data?.message || 'Login failed';
       setError(message);
@@ -74,18 +45,24 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = async (userData) => {
-    // Demo mode - just log them in as demo
-    setIsDemoMode(true);
-    localStorage.setItem('demoMode', 'true');
-    setUser(DEMO_USER);
-    return { success: true };
+    try {
+      setError(null);
+      const response = await api.post('/auth/register', userData);
+      const { user, token } = response.data.data;
+      localStorage.setItem('token', token);
+      setUser(user);
+      return { success: true, user };
+    } catch (err) {
+      const message = err.response?.data?.message || 'Signup failed';
+      setError(message);
+      return { success: false, error: message };
+    }
   };
 
   const logout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('demoMode');
+    localStorage.removeItem('user');
     setUser(null);
-    setIsDemoMode(false);
   };
 
   const updateProfile = async (profileData) => {
@@ -108,6 +85,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     updateProfile,
     isAuthenticated: !!user,
+    isLoading: loading,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
 import LeadDetail from './pages/LeadDetail';
@@ -7,46 +8,110 @@ import Profile from './pages/Profile';
 import Billing from './pages/Billing';
 import IntentRadar from './pages/IntentRadar';
 import AISalesCloser from './pages/AISalesCloser';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import Onboarding from './pages/Onboarding';
 import './App.css';
 
-// Demo mode - always authenticated
-const DEMO_USER = {
-  id: 'demo-123',
-  email: 'demo@aisdr.com',
-  firstName: 'Demo',
-  lastName: 'User',
-  apiKey: 'demo-api-key',
-  subscription: {
-    tier: 'growth',
-    leadsRemaining: 450,
-    totalLeads: 500,
-    expiresAt: '2026-03-20'
+// Protected route component
+const ProtectedRoute = ({ children }) => {
+  const { user, isAuthenticated, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return <div className="loading">Loading...</div>;
   }
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+  
+  // Check if user needs onboarding
+  if (user && !user.onboardingCompleted) {
+    return <Navigate to="/onboarding" />;
+  }
+  
+  return children;
 };
 
-// Provide demo user via context
-import { createContext } from 'react';
-export const DemoAuthContext = createContext({ user: DEMO_USER, isDemoMode: true });
+// Onboarding route - only accessible to authenticated users who haven't completed onboarding
+const OnboardingRoute = ({ children }) => {
+  const { user, isAuthenticated, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return <div className="loading">Loading...</div>;
+  }
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+  
+  if (user && user.onboardingCompleted) {
+    return <Navigate to="/dashboard" />;
+  }
+  
+  return children;
+};
+
+// Public route - redirect to dashboard if already authenticated
+const PublicRoute = ({ children }) => {
+  const { isAuthenticated, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return <div className="loading">Loading...</div>;
+  }
+  
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" />;
+  }
+  
+  return children;
+};
+
+function AppContent() {
+  return (
+    <div className="app">
+      <Routes>
+        {/* Public routes */}
+        <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+        <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
+        
+        {/* Onboarding route */}
+        <Route path="/onboarding" element={
+          <OnboardingRoute>
+            <Onboarding onComplete={() => window.location.href = '/dashboard'} />
+          </OnboardingRoute>
+        } />
+        
+        {/* Protected routes with Navbar */}
+        <Route path="/*" element={
+          <ProtectedRoute>
+            <>
+              <Navbar />
+              <main>
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/leads/:id" element={<LeadDetail />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/billing" element={<Billing />} />
+                  <Route path="/intent-radar" element={<IntentRadar />} />
+                  <Route path="/ai-closer" element={<AISalesCloser />} />
+                  <Route path="*" element={<Navigate to="/dashboard" />} />
+                </Routes>
+              </main>
+            </>
+          </ProtectedRoute>
+        } />
+      </Routes>
+    </div>
+  );
+}
 
 function App() {
   return (
-    <DemoAuthContext.Provider value={{ user: DEMO_USER, isDemoMode: true }}>
-      <div className="app">
-        <Navbar />
-        <main>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/leads/:id" element={<LeadDetail />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/billing" element={<Billing />} />
-            <Route path="/intent-radar" element={<IntentRadar />} />
-            <Route path="/ai-closer" element={<AISalesCloser />} />
-            <Route path="*" element={<Navigate to="/dashboard" />} />
-          </Routes>
-        </main>
-      </div>
-    </DemoAuthContext.Provider>
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 
