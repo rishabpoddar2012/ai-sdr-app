@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../services/api';
+import { scraperAPI } from '../services/api';
 import styles from './ScraperSettings.module.css';
 
 const ScraperSettings = () => {
@@ -26,14 +26,19 @@ const ScraperSettings = () => {
 
   const fetchData = async () => {
     try {
-      const [configRes, typesRes, sourcesRes] = await Promise.all([
-        api.get('/scraper/config'),
-        api.get('/scraper/lead-types'),
-        api.get('/onboarding/sources')
+      const [configRes, typesRes] = await Promise.all([
+        scraperAPI.getConfig(),
+        scraperAPI.getLeadTypes()
       ]);
       setConfig(configRes.data.data);
       setLeadTypes(typesRes.data.data.leadTypes);
-      setSources(sourcesRes.data.data.sources);
+      // Sources are now included in config response
+      setSources([
+        { key: 'hackerNews', name: 'Hacker News', description: 'Tech discussions and job postings', icon: '📰' },
+        { key: 'reddit', name: 'Reddit', description: 'Community discussions and leads', icon: '🤖' },
+        { key: 'upwork', name: 'Upwork', description: 'Freelance job postings', icon: '💼' },
+        { key: 'linkedin', name: 'LinkedIn', description: 'Professional network posts', icon: '💼' }
+      ]);
     } catch (err) {
       setError('Failed to load scraper settings');
     } finally {
@@ -45,7 +50,7 @@ const ScraperSettings = () => {
     setSaving(true);
     setError('');
     try {
-      await api.put('/scraper/config', {
+      await scraperAPI.updateConfig({
         scrapeFrequency: config.scrapeFrequency,
         leadTypes: config.leadTypes,
         keywords: config.keywords,
@@ -65,7 +70,7 @@ const ScraperSettings = () => {
     setError('');
     setTestResults(null);
     try {
-      const response = await api.post('/scraper/test');
+      const response = await scraperAPI.testScraper();
       setTestResults(response.data.data);
     } catch (err) {
       setError('Test failed');

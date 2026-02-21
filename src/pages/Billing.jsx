@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../services/api';
+import { subscriptionAPI } from '../services/api';
 import styles from './Billing.module.css';
 
 const Billing = () => {
@@ -17,8 +17,8 @@ const Billing = () => {
   const fetchData = async () => {
     try {
       const [subRes, plansRes] = await Promise.all([
-        api.get('/subscription'),
-        api.get('/subscription/plans')
+        subscriptionAPI.getSubscription(),
+        subscriptionAPI.getPlans()
       ]);
       setSubscription(subRes.data.data);
       setPlans(plansRes.data.data.plans);
@@ -35,10 +35,7 @@ const Billing = () => {
     setUpgrading(true);
     setError('');
     try {
-      const response = await api.post('/subscription/checkout', {
-        planKey,
-        billingPeriod: 'monthly'
-      });
+      const response = await subscriptionAPI.createCheckout(planKey, 'monthly');
       
       if (response.data.data?.url) {
         window.location.href = response.data.data.url;
@@ -51,7 +48,7 @@ const Billing = () => {
 
   const handleManagePayment = async () => {
     try {
-      const response = await api.post('/subscription/portal');
+      const response = await subscriptionAPI.createPortalSession();
       if (response.data.data?.url) {
         window.location.href = response.data.data.url;
       }
@@ -66,7 +63,7 @@ const Billing = () => {
     }
     
     try {
-      await api.post('/subscription/cancel');
+      await subscriptionAPI.cancelSubscription();
       setSuccessMessage('Subscription cancelled. You\'ll keep access until the end of your billing period.');
       fetchData();
     } catch (err) {
@@ -76,7 +73,7 @@ const Billing = () => {
 
   const handleReactivate = async () => {
     try {
-      await api.post('/subscription/reactivate');
+      await subscriptionAPI.reactivateSubscription();
       setSuccessMessage('Subscription reactivated!');
       fetchData();
     } catch (err) {

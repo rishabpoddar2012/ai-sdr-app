@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Live API URL
-const API_URL = 'https://795868fa4a12cfe9-13-48-42-148.serveousercontent.com';
+// API URL - uses environment variable or falls back to production
+const API_URL = process.env.REACT_APP_API_URL || 'https://ai-sdr-backend.onrender.com';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -55,9 +55,32 @@ export const leadsAPI = {
 
 // Settings APIs
 export const settingsAPI = {
-  getSettings: () => api.get('/api/settings'),
-  updateSettings: (data) => api.put('/api/settings', data),
-  testScoring: (text) => api.post('/api/test/scoring', { text }),
+  getAiSettings: () => api.get('/api/settings/ai'),
+  updateAiSettings: (data) => api.put('/api/settings/ai', data),
+  testAiConnection: () => api.post('/api/settings/ai/test'),
+  getApiCredentials: () => api.get('/api/settings/api-credentials'),
+  regenerateApiKey: () => api.post('/api/settings/api-key/regenerate'),
+  updateWebhook: (url) => api.put('/api/settings/webhook', { webhookUrl: url }),
+  getIntegrations: () => api.get('/api/settings/integrations'),
+};
+
+// Subscription APIs
+export const subscriptionAPI = {
+  getSubscription: () => api.get('/api/subscription'),
+  getPlans: () => api.get('/api/subscription/plans'),
+  createCheckout: (planKey, billingPeriod = 'monthly') => 
+    api.post('/api/subscription/checkout', { planKey, billingPeriod }),
+  createPortalSession: () => api.post('/api/subscription/portal'),
+  cancelSubscription: () => api.post('/api/subscription/cancel'),
+  reactivateSubscription: () => api.post('/api/subscription/reactivate'),
+};
+
+// Scraper APIs
+export const scraperAPI = {
+  getConfig: () => api.get('/api/scraper/config'),
+  updateConfig: (data) => api.put('/api/scraper/config', data),
+  testScraper: () => api.post('/api/scraper/test'),
+  getLeadTypes: () => api.get('/api/scraper/lead-types'),
 };
 
 // Public API (for integrations)

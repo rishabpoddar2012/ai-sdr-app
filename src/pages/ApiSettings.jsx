@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../services/api';
+import { settingsAPI } from '../services/api';
 import styles from './ApiSettings.module.css';
 
 const ApiSettings = () => {
@@ -17,7 +17,7 @@ const ApiSettings = () => {
 
   const fetchApiData = async () => {
     try {
-      const response = await api.get('/settings/api-credentials');
+      const response = await settingsAPI.getApiCredentials();
       setApiData(response.data.data);
       setWebhookUrl(response.data.data.webhookUrl || '');
     } catch (err) {
@@ -45,7 +45,7 @@ const ApiSettings = () => {
     setRegenerating(true);
     setError('');
     try {
-      const response = await api.post('/settings/api-key/regenerate');
+      const response = await settingsAPI.regenerateApiKey();
       setApiData({ ...apiData, apiKey: response.data.data.apiKey });
       setSuccess('API key regenerated successfully!');
       setTimeout(() => setSuccess(''), 3000);
@@ -58,7 +58,7 @@ const ApiSettings = () => {
 
   const updateWebhook = async () => {
     try {
-      await api.put('/settings/webhook', { webhookUrl });
+      await settingsAPI.updateWebhook(webhookUrl);
       setSuccess('Webhook URL updated!');
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
