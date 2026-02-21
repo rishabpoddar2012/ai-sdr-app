@@ -1,0 +1,404 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.container h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #111827;
+}
+
+.subtitle {
+  color: #6b7280;
+  margin-bottom: 32px;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px;
+  color: #6b7280;
+}
+
+.error {
+  background: #fef2f2;
+  color: #dc2626;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.success {
+  background: #d1fae5;
+  color: #059669;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+/* Sections */
+.section {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.section h2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #111827;
+}
+
+.description {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-bottom: 16px;
+}
+
+.limitHint {
+  color: #f59e0b;
+  font-weight: 500;
+}
+
+/* Frequency Grid */
+.frequencyGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.freqCard {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  text-align: left;
+}
+
+.freqCard:hover:not(:disabled) {
+  border-color: #6366f1;
+}
+
+.freqCard.selected {
+  border-color: #6366f1;
+  background: #eef2ff;
+}
+
+.freqCard.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.freqName {
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.freqDesc {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.upgradeBadge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 2px 8px;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 0.625rem;
+  font-weight: 600;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+/* Lead Types Grid */
+.leadTypesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.leadTypeCard {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.leadTypeCard:hover {
+  border-color: #6366f1;
+}
+
+.leadTypeCard.selected {
+  border-color: #6366f1;
+  background: #eef2ff;
+}
+
+.leadTypeCard input {
+  position: absolute;
+  opacity: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.leadTypeCard.selected .checkmark {
+  background: #6366f1;
+  border-color: #6366f1;
+}
+
+.leadTypeCard.selected .checkmark::after {
+  content: '✓';
+  color: white;
+  font-size: 12px;
+}
+
+.leadTypeName {
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+  padding-right: 28px;
+}
+
+.leadTypeDesc {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* Keywords Input */
+.keywordsInput {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  resize: vertical;
+}
+
+.keywordsInput:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+.hint {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Sources Grid */
+.sourcesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.sourceCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  text-align: center;
+}
+
+.sourceCard:hover {
+  border-color: #6366f1;
+}
+
+.sourceCard.selected {
+  border-color: #6366f1;
+  background: #eef2ff;
+}
+
+.sourceCard.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sourceCard input {
+  position: absolute;
+  opacity: 0;
+}
+
+.sourceIcon {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+
+.sourceName {
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.sourceDesc {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.upgradeHint {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.upgradeHint a {
+  color: #6366f1;
+  font-weight: 500;
+}
+
+/* Test Results */
+.testResults {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.testSummary {
+  margin-bottom: 16px;
+  color: #374151;
+}
+
+.testMatch {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.scoreBadge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.scoreBadge.hot {
+  background: #fecaca;
+  color: #dc2626;
+}
+
+.scoreBadge.warm {
+  background: #fde68a;
+  color: #d97706;
+}
+
+.scoreBadge.cold {
+  background: #bfdbfe;
+  color: #2563eb;
+}
+
+.matchContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.matchContent strong {
+  color: #111827;
+  font-size: 0.875rem;
+}
+
+.matchContent span {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.matchContent small {
+  font-size: 0.75rem;
+  color: #22c55e;
+}
+
+/* Action Buttons */
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.testBtn {
+  flex: 1;
+  padding: 14px 24px;
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.testBtn:hover:not(:disabled) {
+  background: #f9fafb;
+}
+
+.saveBtn {
+  flex: 1;
+  padding: 14px 24px;
+  background: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.saveBtn:hover:not(:disabled) {
+  background: #4f46e5;
+}
+
+.testBtn:disabled,
+.saveBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .frequencyGrid,
+  .leadTypesGrid,
+  .sourcesGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .actions {
+    flex-direction: column;
+  }
+}

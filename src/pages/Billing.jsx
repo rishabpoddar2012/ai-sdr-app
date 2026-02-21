@@ -1,221 +1,250 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { DemoAuthContext } from '../App';
+import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import './Billing.css';
-
-const PLANS = [
-  {
-    id: 'free',
-    name: 'Free',
-    price: { monthly: 0, yearly: 0 },
-    leads: 50,
-    features: ['50 leads/month', 'Basic filtering', 'Email notifications', 'Standard support']
-  },
-  {
-    id: 'starter',
-    name: 'Starter',
-    price: { monthly: 49, yearly: 470 },
-    leads: 200,
-    features: ['200 leads/month', 'Advanced filtering', 'Priority email', 'CSV export', 'API access']
-  },
-  {
-    id: 'growth',
-    name: 'Growth',
-    price: { monthly: 149, yearly: 1430 },
-    leads: 1000,
-    features: ['1000 leads/month', 'AI scoring', 'Slack integration', 'Webhook API', 'Priority support']
-  },
-  {
-    id: 'agency',
-    name: 'Agency',
-    price: { monthly: 399, yearly: 3830 },
-    leads: 5000,
-    features: ['5000 leads/month', 'White-label', 'Team collaboration', 'CRM integrations', 'Dedicated support']
-  }
-];
+import styles from './Billing.module.css';
 
 const Billing = () => {
-  const { user } = useContext(DemoAuthContext);
-  const [billingPeriod, setBillingPeriod] = useState('monthly');
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(null);
   const [subscription, setSubscription] = useState(null);
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [upgrading, setUpgrading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
-    fetchSubscription();
+    fetchData();
   }, []);
 
-  const fetchSubscription = async () => {
+  const fetchData = async () => {
     try {
-      const response = await api.get('/subscription');
-      setSubscription(response.data.data);
+      const [subRes, plansRes] = await Promise.all([
+        api.get('/subscription'),
+        api.get('/subscription/plans')
+      ]);
+      setSubscription(subRes.data.data);
+      setPlans(plansRes.data.data.plans);
     } catch (err) {
-      console.error('Failed to fetch subscription:', err);
+      setError('Failed to load billing information');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleUpgrade = async (planId) => {
-    if (planId === 'free') return;
+  const handleUpgrade = async (planKey) => {
+    if (planKey === 'free') return;
     
-    setLoading(true);
-    setMessage(null);
-    
+    setUpgrading(true);
+    setError('');
     try {
       const response = await api.post('/subscription/checkout', {
-        plan: planId,
-        billingPeriod
+        planKey,
+        billingPeriod: 'monthly'
       });
       
       if (response.data.data?.url) {
         window.location.href = response.data.data.url;
       }
     } catch (err) {
-      setMessage({
-        type: 'error',
-        text: err.response?.data?.message || 'Failed to start checkout'
-      });
-      setLoading(false);
+      setError(err.response?.data?.message || 'Failed to start checkout');
+      setUpgrading(false);
     }
   };
 
-  const handleManageBilling = async () => {
-    setLoading(true);
+  const handleManagePayment = async () => {
     try {
       const response = await api.post('/subscription/portal');
       if (response.data.data?.url) {
         window.location.href = response.data.data.url;
       }
     } catch (err) {
-      setMessage({
-        type: 'error',
-        text: 'Failed to open billing portal'
-      });
+      setError('Failed to open payment portal');
     }
-    setLoading(false);
   };
 
-  const currentPlan = user?.plan || 'free';
+  const handleCancel = async () => {
+    if (!window.confirm('Are you sure you want to cancel? You\'ll keep access until the end of your billing period.')) {
+      return;
+    }
+    
+    try {
+      await api.post('/subscription/cancel');
+      setSuccessMessage('Subscription cancelled. You\'ll keep access until the end of your billing period.');
+      fetchData();
+    } catch (err) {
+      setError('Failed to cancel subscription');
+    }
+  };
+
+  const handleReactivate = async () => {
+    try {
+      await api.post('/subscription/reactivate');
+      setSuccessMessage('Subscription reactivated!');
+      fetchData();
+    } catch (err) {
+      setError('Failed to reactivate subscription');
+    }
+  };
+
+  const formatPrice = (cents) => {
+    if (cents === 0) return 'Free';
+    return `$${(cents / 100).toFixed(0)}/mo`;
+  };
+
+  const getUsageColor = (percentage) => {
+    if (percentage >= 90) return '#dc2626';
+    if (percentage >= 75) return '#f59e0b';
+    return '#22c55e';
+  };
+
+  if (loading) return <div className={styles.loading}>Loading...</div>;
 
   return (
-    <div className="billing-page">
-      <div className="billing-header">
-        <h1>Billing & Plans</h1>
-        <p>Choose the plan that works best for your business</p>
-      </div>
+    <div className={styles.container}>
+      <h1>Billing & Subscription</h1>
 
-      {message && (
-        <div className={`alert alert-${message.type}`}>
-          {message.text}
-        </div>
-      )}
+      {error && <div className={styles.error}>{error}</div>}
+      {successMessage && <div className={styles.success}>{successMessage}</div>}
 
-      {subscription && currentPlan !== 'free' && (
-        <div className="current-subscription card">
-          <h3>Current Subscription</h3>
-          <div className="subscription-details">
-            <div className="sub-item">
-              <span className="sub-label">Plan</span>
-              <span className="sub-value capitalize">{subscription.plan}</span>
-            </div>
-            <div className="sub-item">
-              <span className="sub-label">Status</span>
-              <span className={`sub-value status-${subscription.status}`}>
+      {/* Current Plan Card */}
+      {subscription && (
+        <div className={styles.currentPlan}>
+          <div className={styles.planHeader}>
+            <div>
+              <span className={`${styles.badge} ${styles[subscription.tier]}`}>
+                {subscription.tier.toUpperCase()}
+              </span>
+              <span className={`${styles.status} ${styles[subscription.status]}`}>
                 {subscription.status}
               </span>
             </div>
-            {subscription.currentPeriodEnd && (
-              <div className="sub-item">
-                <span className="sub-label">Renews on</span>
-                <span className="sub-value">
-                  {new Date(subscription.currentPeriodEnd).toLocaleDateString()}
-                </span>
-              </div>
+            {subscription.tier !== 'free' && (
+              <button 
+                className={styles.manageBtn}
+                onClick={handleManagePayment}
+              >
+                Manage Payment
+              </button>
             )}
           </div>
-          <button 
-            className="btn btn-outline"
-            onClick={handleManageBilling}
-            disabled={loading}
-          >
-            Manage Billing
-          </button>
+
+          <div className={styles.usageSection}>
+            <div className={styles.usageHeader}>
+              <span>Lead Usage</span>
+              <span className={styles.usageNumbers}>
+                {subscription.leadsUsed} / {subscription.leadsLimit} leads
+              </span>
+            </div>
+            <div className={styles.progressBar}>
+              <div 
+                className={styles.progressFill}
+                style={{ 
+                  width: `${Math.min(subscription.usagePercentage, 100)}%`,
+                  backgroundColor: getUsageColor(subscription.usagePercentage)
+                }}
+              />
+            </div>
+            <p className={styles.usageHint}>
+              {subscription.usagePercentage >= 90 
+                ? '⚠️ You\'re almost at your limit. Upgrade now to keep receiving leads!'
+                : `${subscription.leadsRemaining} leads remaining this period`
+              }
+            </p>
+          </div>
+
+          {subscription.status === 'cancelled' ? (
+            <button 
+              className={styles.reactivateBtn}
+              onClick={handleReactivate}
+            >
+              Reactivate Subscription
+            </button>
+          ) : subscription.tier !== 'free' && (
+            <button 
+              className={styles.cancelBtn}
+              onClick={handleCancel}
+            >
+              Cancel Subscription
+            </button>
+          )}
         </div>
       )}
 
-      <div className="billing-toggle">
-        <button
-          className={`toggle-btn ${billingPeriod === 'monthly' ? 'active' : ''}`}
-          onClick={() => setBillingPeriod('monthly')}
-        >
-          Monthly
-        </button>
-        <button
-          className={`toggle-btn ${billingPeriod === 'yearly' ? 'active' : ''}`}
-          onClick={() => setBillingPeriod('yearly')}
-        >
-          Yearly
-          <span className="save-badge">Save 20%</span>
-        </button>
-      </div>
-
-      <div className="pricing-grid">
-        {PLANS.map((plan) => {
-          const isCurrentPlan = currentPlan === plan.id;
-          const price = plan.price[billingPeriod];
+      {/* Pricing Plans */}
+      <h2>Choose Your Plan</h2>
+      <div className={styles.plansGrid}>
+        {plans.map(plan => {
+          const isCurrentPlan = subscription?.tier === plan.key;
+          const features = plan.features || {};
           
           return (
             <div 
-              key={plan.id} 
-              className={`pricing-card ${isCurrentPlan ? 'current' : ''} ${plan.id === 'growth' ? 'featured' : ''}`}
+              key={plan.key} 
+              className={`${styles.planCard} ${isCurrentPlan ? styles.current : ''} ${plan.key === 'pro' ? styles.popular : ''}`}
             >
-              {plan.id === 'growth' && <span className="popular-badge">Popular</span>}
+              {plan.key === 'pro' && <span className={styles.popularBadge}>Most Popular</span>}
               
-              <div className="pricing-header">
-                <h3>{plan.name}</h3>
-                <div className="pricing-price">
-                  <span className="currency">$</span>
-                  <span className="amount">{price}</span>
-                  <span className="period">/{billingPeriod === 'monthly' ? 'mo' : 'yr'}</span>
-                </div>
-                <p className="pricing-leads">{plan.leads} leads/month</p>
+              <h3>{plan.name}</h3>
+              <p className={styles.description}>{plan.description}</p>
+              
+              <div className={styles.price}>
+                {formatPrice(plan.priceMonthly)}
+                {plan.priceYearly && (
+                  <span className={styles.yearly}>
+                    or ${(plan.priceYearly / 100).toFixed(0)}/year
+                  </span>
+                )}
               </div>
 
-              <ul className="pricing-features">
-                {plan.features.map((feature, idx) => (
-                  <li key={idx} className="feature-item">
-                    <span className="check">✓</span>
-                    {feature}
-                  </li>
-                ))}
+              <ul className={styles.features}>
+                <li>
+                  <strong>{plan.leadsLimit === 999999 ? 'Unlimited' : plan.leadsLimit}</strong> leads/month
+                </li>
+                <li>
+                  <strong>{plan.scrapeFrequency}</strong> scraping
+                </li>
+                {plan.sourcesLimit ? (
+                  <li><strong>{plan.sourcesLimit}</strong> source{plan.sourcesLimit > 1 ? 's' : ''}</li>
+                ) : (
+                  <li><strong>Unlimited</strong> sources</li>
+                )}
+                {features.api_access && <li>✓ API access</li>}
+                {features.webhooks && <li>✓ Webhook notifications</li>}
+                <li>✓ {features.support || 'Community'} support</li>
               </ul>
 
-              <button
-                className={`btn btn-block ${isCurrentPlan ? 'btn-secondary' : 'btn-primary'}`}
-                onClick={() => handleUpgrade(plan.id)}
-                disabled={isCurrentPlan || loading}
-              >
-                {isCurrentPlan ? 'Current Plan' : loading ? 'Processing...' : 'Upgrade'}
-              </button>
+              {isCurrentPlan ? (
+                <button className={styles.currentBtn} disabled>
+                  Current Plan
+                </button>
+              ) : (
+                <button
+                  className={plan.key === 'free' ? styles.freeBtn : styles.upgradeBtn}
+                  onClick={() => handleUpgrade(plan.key)}
+                  disabled={upgrading}
+                >
+                  {upgrading && plan.key !== 'free' ? 'Loading...' : 
+                   plan.key === 'free' ? 'Downgrade to Free' : 
+                   subscription?.tier === 'free' ? 'Upgrade' : 'Switch Plan'}
+                </button>
+              )}
             </div>
           );
         })}
       </div>
 
-      <div className="billing-faq">
+      {/* FAQ Section */}
+      <div className={styles.faq}>
         <h3>Frequently Asked Questions</h3>
-        <div className="faq-list">
-          <div className="faq-item">
-            <h4>Can I change plans anytime?</h4>
-            <p>Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately.</p>
-          </div>
-          <div className="faq-item">
-            <h4>What happens if I exceed my lead limit?</h4>
-            <p>We'll notify you when you're close to your limit. You can upgrade anytime to get more leads.</p>
-          </div>
-          <div className="faq-item">
-            <h4>Can I cancel my subscription?</h4>
-            <p>Yes, you can cancel anytime from your billing portal. You'll continue to have access until the end of your billing period.</p>
-          </div>
+        <div className={styles.faqItem}>
+          <h4>How does the free plan work?</h4>
+          <p>The free plan includes 10 leads per week, scraped daily from 1 source of your choice. Perfect for testing the platform.</p>
+        </div>
+        <div className={styles.faqItem}>
+          <h4>Can I change plans anytime?</h4>
+          <p>Yes! You can upgrade or downgrade at any time. Upgrades take effect immediately, downgrades at the end of your billing period.</p>
+        </div>
+        <div className={styles.faqItem}>
+          <h4>What happens if I hit my lead limit?</h4>
+          <p>We'll notify you when you reach 80% and 100% of your limit. At 100%, scraping pauses until your next billing period or until you upgrade.</p>
         </div>
       </div>
     </div>

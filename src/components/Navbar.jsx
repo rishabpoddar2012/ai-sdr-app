@@ -19,8 +19,15 @@ const Navbar = () => {
           <Link to="/dashboard" className="nav-link">Dashboard</Link>
           <Link to="/intent-radar" className="nav-link">Intent Radar</Link>
           <Link to="/ai-closer" className="nav-link">AI Closer</Link>
-          <Link to="/profile" className="nav-link">Profile</Link>
-          <Link to="/billing" className="nav-link">Billing</Link>
+          <div className="nav-dropdown">
+            <span className="nav-link">Settings ▾</span>
+            <div className="dropdown-menu">
+              <Link to="/profile" className="dropdown-item">Profile</Link>
+              <Link to="/settings/scraper" className="dropdown-item">Scraper</Link>
+              <Link to="/settings/api" className="dropdown-item">API Keys</Link>
+            </div>
+          </div>
+          <Link to="/billing" className="nav-link billing-link">Billing</Link>
         </div>
       )}
       

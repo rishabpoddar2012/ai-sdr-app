@@ -6,6 +6,8 @@ import Dashboard from './pages/Dashboard';
 import LeadDetail from './pages/LeadDetail';
 import Profile from './pages/Profile';
 import Billing from './pages/Billing';
+import ApiSettings from './pages/ApiSettings';
+import ScraperSettings from './pages/ScraperSettings';
 import IntentRadar from './pages/IntentRadar';
 import AISalesCloser from './pages/AISalesCloser';
 import Login from './pages/Login';
@@ -94,6 +96,8 @@ function AppContent() {
                   <Route path="/leads/:id" element={<LeadDetail />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/billing" element={<Billing />} />
+                  <Route path="/settings/api" element={<ApiSettings />} />
+                  <Route path="/settings/scraper" element={<ScraperSettings />} />
                   <Route path="/intent-radar" element={<IntentRadar />} />
                   <Route path="/ai-closer" element={<AISalesCloser />} />
                   <Route path="*" element={<Navigate to="/dashboard" />} />

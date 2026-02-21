@@ -1,0 +1,349 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.container h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  color: #111827;
+}
+
+.container h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 40px 0 24px;
+  color: #374151;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px;
+  color: #6b7280;
+}
+
+.error {
+  background: #fef2f2;
+  color: #dc2626;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.success {
+  background: #d1fae5;
+  color: #059669;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+/* Current Plan Section */
+.currentPlan {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 40px;
+}
+
+.planHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-right: 8px;
+}
+
+.badge.free {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.badge.pro {
+  background: #ddd6fe;
+  color: #7c3aed;
+}
+
+.badge.enterprise {
+  background: #fce7f3;
+  color: #db2777;
+}
+
+.status {
+  font-size: 0.875rem;
+  text-transform: capitalize;
+}
+
+.status.active {
+  color: #059669;
+}
+
+.status.cancelled {
+  color: #dc2626;
+}
+
+.manageBtn {
+  padding: 8px 16px;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.manageBtn:hover {
+  background: #e5e7eb;
+}
+
+/* Usage Section */
+.usageSection {
+  margin-bottom: 24px;
+}
+
+.usageHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.usageNumbers {
+  font-weight: 500;
+  color: #374151;
+}
+
+.progressBar {
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.usageHint {
+  margin-top: 12px;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* Action Buttons */
+.reactivateBtn {
+  padding: 10px 20px;
+  background: #22c55e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.reactivateBtn:hover {
+  background: #16a34a;
+}
+
+.cancelBtn {
+  padding: 10px 20px;
+  background: white;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.cancelBtn:hover {
+  background: #fef2f2;
+}
+
+/* Plans Grid */
+.plansGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.planCard {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  position: relative;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.planCard:hover {
+  border-color: #d1d5db;
+}
+
+.planCard.current {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.planCard.popular {
+  border-color: #8b5cf6;
+}
+
+.popularBadge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #8b5cf6;
+  color: white;
+  padding: 4px 16px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.planCard h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #111827;
+}
+
+.description {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-bottom: 16px;
+}
+
+.price {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.yearly {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #6b7280;
+}
+
+.features {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0;
+}
+
+.features li {
+  padding: 8px 0;
+  color: #374151;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.features li:last-child {
+  border-bottom: none;
+}
+
+/* Plan Buttons */
+.currentBtn {
+  width: 100%;
+  padding: 12px;
+  background: #e5e7eb;
+  color: #6b7280;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: default;
+}
+
+.upgradeBtn {
+  width: 100%;
+  padding: 12px;
+  background: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.upgradeBtn:hover:not(:disabled) {
+  background: #4f46e5;
+}
+
+.freeBtn {
+  width: 100%;
+  padding: 12px;
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.freeBtn:hover {
+  background: #f9fafb;
+}
+
+/* FAQ Section */
+.faq {
+  margin-top: 60px;
+}
+
+.faq h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.faqItem {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.faqItem:last-child {
+  border-bottom: none;
+}
+
+.faqItem h4 {
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.faqItem p {
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+@media (max-width: 968px) {
+  .plansGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .planHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
